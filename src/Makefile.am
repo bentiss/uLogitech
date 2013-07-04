@@ -1,6 +1,6 @@
 noinst_PROGRAMS =
 
-bin_PROGRAMS =
+bin_PROGRAMS = m705_button6_toggler
 
 LDADD = $(top_srcdir)/lib/libhidpp10.a $(top_srcdir)/lib/libunifying.a $(AM_LDFLAGS)
 
