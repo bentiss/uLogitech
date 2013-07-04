@@ -64,6 +64,9 @@
 #define CONNECT_DEVICES_DISCONNECT			3
 
 #define __CMD_PAIRING_INFORMATION		0xB5
+#define DEVICE_PAIRING_INFORMATION			0x20
+#define DEVICE_EXTENDED_PAIRING_INFORMATION		0x30
+#define DEVICE_NAME					0x40
 
 #define __CMD_DEVICE_FIRMWARE_INFORMATION	0xF1
 #define FIRMWARE_INFO_ITEM_FW_NAME_AND_VERSION(MCU)	((MCU - 1) << 4 | 0x01)
@@ -71,13 +74,13 @@
 #define FIRMWARE_INFO_ITEM_HW_VERSION(MCU)		((MCU - 1) << 4 | 0x03)
 #define FIRMWARE_INFO_ITEM_BOOTLOADER_VERSION(MCU)	((MCU - 1) << 4 | 0x04)
 
-#define CMD_PAIRING_INFORMATION(idx)	{ \
+#define CMD_PAIRING_INFORMATION(idx, type)	{ \
 	.msg = { \
 		.report_id = REPORT_ID_SHORT, \
 		.device_idx = RECEIVER_IDX, \
 		.sub_id = GET_LONG_REGISTER_REQ, \
 		.address = __CMD_PAIRING_INFORMATION, \
-		.parameters = {0x20 + idx, 0x00, 0x00 }, \
+		.parameters = {type + idx, 0x00, 0x00 }, \
 	} \
 }
 

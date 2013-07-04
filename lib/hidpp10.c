@@ -27,6 +27,7 @@
 #include <linux/types.h>
 #include <errno.h>
 #include <stdio.h>
+#include <string.h>
 
 #include <debug.h>
 #include <hidpp10.h>
@@ -49,6 +50,21 @@ const char *hidpp_errors[0xFF] = {
 	[0x0D ... 0xFE] = NULL,
 };
 #endif
+
+const char *device_types[0xFF] = {
+	[0x00] = "Unknown",
+	[0x01] = "Keyboard",
+	[0x02] = "Mouse",
+	[0x03] = "Numpad",
+	[0x04] = "Presenter",
+	[0x05 ... 0x07] = "Reserved for future",
+	[0x06] = "ERR_ALREADY_EXISTS",
+	[0x07] = "ERR_BUSY",
+	[0x08] = "Trackball",
+	[0x09] = "Touchpad",
+	[0x0A ... 0xFE] = NULL,
+};
+
 
 static int hidpp10_write_command(int fd, __u8 *cmd, int size) {
 	int res = write(fd, cmd, size);
@@ -194,16 +210,17 @@ void hidpp10_list_devices(int fd) {
 		if (res)
 			continue;
 
-		printf("[%d] Wireless PID: %04x\n", i, dev.wpid);
+		printf("[%d] %s	%s (Wireless PID: %04x)\n", i, device_types[dev.device_type] ? device_types[dev.device_type] : "", dev.name, dev.wpid);
 	}
 }
 
 static int hidpp10_get_device_info(int fd, struct unifying_device *dev) {
 	unsigned idx = dev->index;
-	union hidpp10_message pairing_information = CMD_PAIRING_INFORMATION(idx);
+	union hidpp10_message pairing_information = CMD_PAIRING_INFORMATION(idx, DEVICE_PAIRING_INFORMATION);
+	union hidpp10_message device_name = CMD_PAIRING_INFORMATION(idx, DEVICE_NAME);
 	union hidpp10_message firmware_information = CMD_DEVICE_FIRMWARE_INFORMATION(idx, FIRMWARE_INFO_ITEM_FW_NAME_AND_VERSION(1));
 	union hidpp10_message build_information = CMD_DEVICE_FIRMWARE_INFORMATION(idx, FIRMWARE_INFO_ITEM_FW_BUILD_NUMBER(1));
-	int res;
+	int res, i;
 
 	res = hidpp10_request_command(fd, &pairing_information);
 	if (res)
@@ -213,6 +230,13 @@ static int hidpp10_get_device_info(int fd, struct unifying_device *dev) {
 	dev->wpid = (pairing_information.msg.string[3] << 8) |
 			pairing_information.msg.string[4];
 	dev->device_type = pairing_information.msg.string[7];
+
+	res = hidpp10_request_command(fd, &device_name);
+	if (res)
+		return -1;
+
+	memcpy(dev->name, &device_name.msg.string[2], sizeof(device_name.msg.string));
+	dev->name[14] = '\0';
 
 	/*
 	 * This may fail on some devices

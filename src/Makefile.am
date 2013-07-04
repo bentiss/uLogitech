@@ -3,7 +3,8 @@ noinst_PROGRAMS =
 bin_PROGRAMS = \
 	m705_button6_toggler \
 	pairing_tool \
-	unpairing_tool
+	unpairing_tool \
+	list_unifying_devices
 
 LDADD = $(top_srcdir)/lib/libhidpp10.a $(top_srcdir)/lib/libunifying.a $(AM_LDFLAGS)
 
