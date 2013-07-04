@@ -1,6 +1,24 @@
-lib_LIBRARIES =
+lib_LIBRARIES = \
+	libhidpp10.a \
+	libunifying.a
 
 AM_CPPFLAGS=-I$(top_srcdir)/include/
+
+libhidpp10_adir = \
+	$(top_srcdir)/lib
+libhidpp10_a_HEADERS = \
+	$(top_srcdir)/include/hidpp10.h
+libhidpp10_a_SOURCES = \
+	libhidpp10_a_HEADERS \
+	$(top_srcdir)/lib/hidpp10.c
+
+libunifying_adir = \
+	$(top_srcdir)/lib
+libunifying_a_HEADERS = \
+	$(top_srcdir)/include/unifying.h
+libunifying_a_SOURCES = \
+	libunifying_a_HEADERS \
+	$(top_srcdir)/lib/unifying.c
 
 # man page generation
 if HAVE_DOCTOOLS

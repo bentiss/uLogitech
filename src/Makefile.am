@@ -2,7 +2,7 @@ noinst_PROGRAMS =
 
 bin_PROGRAMS =
 
-LDADD = $(AM_LDFLAGS)
+LDADD = $(top_srcdir)/lib/libhidpp10.a $(top_srcdir)/lib/libunifying.a $(AM_LDFLAGS)
 
 AM_CPPFLAGS = -I$(top_srcdir)/include/
 
