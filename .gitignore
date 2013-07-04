@@ -1,0 +1,13 @@
+autom4te.cache/*
+config-aux/*
+*.o
+*.in
+*.m4
+*.log
+*.status
+*.Po
+*.a
+configure
+Makefile
+config.h
+stamp-h1
