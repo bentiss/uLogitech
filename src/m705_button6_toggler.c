@@ -42,7 +42,8 @@ int main(int argc, char **argv)
 		fd = unifying_find_receiver();
 	else {
 		fd = unifying_open_receiver(argv[1]);
-		perror("Unable to open device");
+		if (fd < 0)
+			perror("Unable to open device");
 	}
 
 	if (fd < 0)
