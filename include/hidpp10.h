@@ -139,5 +139,6 @@ union hidpp10_message {
 
 int hidpp10_request_command(int fd, union hidpp10_message *msg);
 int hidpp10_toggle_individual_feature(int fd, struct unifying_device *dev, int feature_bit_r0, int feature_bit_r2);
-int hidpp10_get_device_info(int fd, struct unifying_device *dev);
+int hidpp10_get_device_from_wpid(int fd, __u16 wpid, struct unifying_device *dev);
+int hidpp10_get_device_from_idx(int fd, int idx, struct unifying_device *dev);
 #endif /* HIDPP_10_H */

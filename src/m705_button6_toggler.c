@@ -32,6 +32,7 @@
 
 int main(int argc, char **argv)
 {
+	struct unifying_device dev;
 	int fd;
 	int res;
 	int i;
@@ -47,28 +48,16 @@ int main(int argc, char **argv)
 	if (fd < 0)
 		return 1;
 
-	for (i = 0; i < 6; i++) {
-		struct unifying_device dev = {.index = i};
+	res = hidpp10_get_device_from_wpid(fd, 0x101b, &dev);
 
-		/*
-		 * Retrieve device information (wireless PID, etc...)
-		 * for device index i
-		 */
-		res = hidpp10_get_device_info(fd, &dev);
-		if (res < 0)
-			continue;
-
-		printf("  device %d found: Wireless PID: %04x\n", dev.index, dev.wpid);
-		if (dev.build)
-			printf("    fw RR %02x.%02x, build %04x\n", dev.fw_major, dev.fw_minor, dev.build);
+	if (!res) {
+		printf("M705 found at index %d: fw RR %02x.%02x, build %04x\n", dev.index, dev.fw_major, dev.fw_minor, dev.build);
 
 		/* M705 with FW RR 17.01 - build 0017 */
-		if (dev.wpid == 0x101b &&
-		    dev.fw_major == 0x17 &&
+		if (dev.fw_major == 0x17 &&
 		    dev.fw_minor == 0x01 &&
 		    dev.build == 0x0015)
 			hidpp10_toggle_individual_feature(fd, &dev, FEATURE_BIT_R0_SPECIAL_BUTTON_FUNCTION, -1);
-
 	}
 
 	close(fd);

@@ -173,7 +173,7 @@ int hidpp10_toggle_individual_feature(int fd, struct unifying_device *dev, int f
 	return res;
 }
 
-int hidpp10_get_device_info(int fd, struct unifying_device *dev) {
+static int hidpp10_get_device_info(int fd, struct unifying_device *dev) {
 	unsigned idx = dev->index;
 	union hidpp10_message pairing_information = CMD_PAIRING_INFORMATION(idx);
 	union hidpp10_message firmware_information = CMD_DEVICE_FIRMWARE_INFORMATION(idx, FIRMWARE_INFO_ITEM_FW_NAME_AND_VERSION(1));
@@ -208,6 +208,26 @@ int hidpp10_get_device_info(int fd, struct unifying_device *dev) {
 			build_information.msg.string[2];
 
 	return 0;
+}
 
-};
+int hidpp10_get_device_from_wpid(int fd, __u16 wpid, struct unifying_device *dev) {
+	int i, res;
 
+	for (i = 0; i < 6; i++) {
+		res = hidpp10_get_device_from_idx(fd, i, dev);
+		if (res)
+			continue;
+
+		if (dev->wpid == wpid)
+			break;
+
+		res = -1;
+	}
+
+	return res;
+}
+
+int hidpp10_get_device_from_idx(int fd, int idx, struct unifying_device *dev) {
+	dev->index = idx;
+	return hidpp10_get_device_info(fd, dev);
+}
