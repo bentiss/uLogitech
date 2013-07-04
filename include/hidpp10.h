@@ -58,6 +58,11 @@
 #define FEATURE_BIT_R2_3D_ENGINE			2
 #define FEATURE_BIT_R2_HOST_SW_CONTROLS_LEDS		3
 
+#define __CMD_DEVICE_CONNECTION_DISCONNECTION	0xB2
+#define CONNECT_DEVICES_OPEN_LOCK			1
+#define CONNECT_DEVICES_CLOSE_LOCK			2
+#define CONNECT_DEVICES_DISCONNECT			3
+
 #define __CMD_PAIRING_INFORMATION		0xB5
 
 #define __CMD_DEVICE_FIRMWARE_INFORMATION	0xF1
@@ -93,6 +98,16 @@
 		.sub_id = sub, \
 		.address = __CMD_ENABLE_INDIVIDUAL_FEATURES, \
 		.parameters = {0x00, 0x00, 0x00 }, \
+	} \
+}
+
+#define CMD_DEVICE_CONNECTION_DISCONNECTION(idx, cmd, timeout)	{ \
+	.msg = { \
+		.report_id = REPORT_ID_SHORT, \
+		.device_idx = RECEIVER_IDX, \
+		.sub_id = SET_REGISTER_REQ, \
+		.address = __CMD_DEVICE_CONNECTION_DISCONNECTION, \
+		.parameters = {cmd, idx, timeout }, \
 	} \
 }
 
@@ -139,6 +154,9 @@ union hidpp10_message {
 
 int hidpp10_request_command(int fd, union hidpp10_message *msg);
 int hidpp10_toggle_individual_feature(int fd, struct unifying_device *dev, int feature_bit_r0, int feature_bit_r2);
+int hidpp10_open_lock(int fd);
+int hidpp10_disconnect(int fd, int idx);
+void hidpp10_list_devices(int fd);
 int hidpp10_get_device_from_wpid(int fd, __u16 wpid, struct unifying_device *dev);
 int hidpp10_get_device_from_idx(int fd, int idx, struct unifying_device *dev);
 #endif /* HIDPP_10_H */

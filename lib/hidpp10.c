@@ -173,6 +173,31 @@ int hidpp10_toggle_individual_feature(int fd, struct unifying_device *dev, int f
 	return res;
 }
 
+int hidpp10_open_lock(int fd) {
+	union hidpp10_message open_lock = CMD_DEVICE_CONNECTION_DISCONNECTION(0x00, CONNECT_DEVICES_OPEN_LOCK, 0x08);
+
+	return hidpp10_request_command(fd, &open_lock);
+}
+
+int hidpp10_disconnect(int fd, int idx) {
+	union hidpp10_message disconnect = CMD_DEVICE_CONNECTION_DISCONNECTION(idx + 1, CONNECT_DEVICES_DISCONNECT, 0x00);
+
+	return hidpp10_request_command(fd, &disconnect);
+}
+
+void hidpp10_list_devices(int fd) {
+	struct unifying_device dev;
+	int i, res;
+
+	for (i = 0; i < 6; ++i) {
+		res = hidpp10_get_device_from_idx(fd, i, &dev);
+		if (res)
+			continue;
+
+		printf("[%d] Wireless PID: %04x\n", i, dev.wpid);
+	}
+}
+
 static int hidpp10_get_device_info(int fd, struct unifying_device *dev) {
 	unsigned idx = dev->index;
 	union hidpp10_message pairing_information = CMD_PAIRING_INFORMATION(idx);
