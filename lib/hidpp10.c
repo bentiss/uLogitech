@@ -32,6 +32,12 @@
 #include <debug.h>
 #include <hidpp10.h>
 
+#define MIN(a,b)                 \
+    ({ __typeof__ (a) _a = (a);  \
+       __typeof__ (b) _b = (b);  \
+       _a < _b ? _a : _b;        \
+     })
+
 #if DEBUG_LVL > 0
 const char *hidpp_errors[0xFF] = {
 	[0x00] = "ERR_SUCCESS",
@@ -220,6 +226,7 @@ static int hidpp10_get_device_info(int fd, struct unifying_device *dev) {
 	union hidpp10_message device_name = CMD_PAIRING_INFORMATION(idx, DEVICE_NAME);
 	union hidpp10_message firmware_information = CMD_DEVICE_FIRMWARE_INFORMATION(idx, FIRMWARE_INFO_ITEM_FW_NAME_AND_VERSION(1));
 	union hidpp10_message build_information = CMD_DEVICE_FIRMWARE_INFORMATION(idx, FIRMWARE_INFO_ITEM_FW_BUILD_NUMBER(1));
+	int name_size;
 	int res, i;
 
 	res = hidpp10_request_command(fd, &pairing_information);
@@ -235,8 +242,9 @@ static int hidpp10_get_device_info(int fd, struct unifying_device *dev) {
 	if (res)
 		return -1;
 
+	name_size = device_name.msg.string[1];
 	memcpy(dev->name, &device_name.msg.string[2], sizeof(device_name.msg.string));
-	dev->name[14] = '\0';
+	dev->name[MIN(name_size, sizeof(dev->name) - 1)] = '\0';
 
 	/*
 	 * This may fail on some devices
