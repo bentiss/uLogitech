@@ -27,15 +27,13 @@
 #ifndef UNIFYING_H
 #define UNIFYING_H
 
-#include <wchar.h>
-
 #define USB_VENDOR_ID_LOGITECH			(__u32)0x046d
 #define USB_DEVICE_ID_UNIFYING_RECEIVER		(__s16)0xc52b
 #define USB_DEVICE_ID_UNIFYING_RECEIVER_2	(__s16)0xc532
 
 struct unifying_device {
 	unsigned index;
-	wchar_t name[15];
+	char name[15];
 	__u16 wpid;
 	__u8 report_interval;
 	__u8 device_type;
