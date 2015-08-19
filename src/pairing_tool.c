@@ -26,6 +26,7 @@
 
 #include <linux/types.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include <unifying.h>
 #include <hidpp10.h>
@@ -33,8 +34,6 @@
 int main(int argc, char **argv)
 {
 	int fd;
-	int res;
-	int i;
 
 	/* Open the Unifying Receiver. */
 	if (argc == 1)

@@ -26,6 +26,7 @@
 
 #include <linux/types.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include <unifying.h>
 #include <hidpp10.h>
@@ -35,7 +36,6 @@ int main(int argc, char **argv)
 	struct unifying_device dev;
 	int fd;
 	int res;
-	int i;
 
 	/* Open the Unifying Receiver. */
 	if (argc == 1)

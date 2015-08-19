@@ -32,8 +32,10 @@
 #include <unifying.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <dirent.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 #define DEV_DIR "/dev"
 #define HIDRAW_DEV_NAME "hidraw"

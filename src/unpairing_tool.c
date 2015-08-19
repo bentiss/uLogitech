@@ -26,6 +26,7 @@
 
 #include <linux/types.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include <unifying.h>
 #include <hidpp10.h>
